@@ -1,0 +1,16 @@
+[Unit]
+Description=Simple Peer audio/video chat server
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/var/www/html/myprivatechat/peerjs/simple-peer
+ExecStart=/var/www/html/myprivatechat/peerjs/simple-peer/scripts/auto-start-peer.sh
+Restart=always
+RestartSec=5
+Environment=PORT=4000
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
