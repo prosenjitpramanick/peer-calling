@@ -1,6 +1,6 @@
-# Simple Peer Studio
+# Peer Video Call
 
-Custom audio/video chat sample that uses [simple-peer](https://github.com/feross/simple-peer) for WebRTC connections and [Browserify](https://browserify.org/) to bundle the browser script. Two peers can discover one another, manually place a call, and accept or reject the incoming request before streams are connected.
+Custom audio/video chat sample that uses [simple-peer for WebRTC connections and [Browserify]to bundle the browser script. Two peers can discover one another, manually place a call, and accept or reject the incoming request before streams are connected.
 
 ## Features
 - Register with a short display name and share your generated peer ID.
@@ -109,60 +109,6 @@ sudo systemctl list-units --type=service --all | grep peer
 - The example uses ephemeral, in-memory state for connected peers. Refreshing clears registrations.
 - WebRTC media requires HTTPS in production; the sample assumes local development over HTTP.
 
-
-
-
-## Scaling Plan
-
-Pick Cloud + Region
-
-Choose a provider you already use (AWS/GCP/Azure). Keep WebRTC media as close to users as possible; plan for at least two regions for failover once traffic grows.
-Start with small general-purpose VMs (e.g., AWS t3.small) behind a managed load balancer.
-Containerize the App
-
-Wrap signaling server + static bundle into a container (Dockerfile).
-Add health endpoints (/healthz) so orchestrators can probe readiness.
-Set Up Infrastructure as Code
-
-Use Terraform modules:
-Networking (VPC, subnets, security groups).
-Compute (Auto Scaling Group or GKE/AKS/EKS node pools).
-Load Balancer (ALB/NLB with TLS).
-State (S3/GCS + DynamoDB/Firestore for peer registry if you outgrow in-memory Map).
-Store Terraform state remotely (S3 + DynamoDB lock) so multiple operators can collaborate.
-Auto Scaling Strategy
-
-Horizontal: Configure ASG/managed instance group with min/max counts (e.g., 2–10 nodes). Scale metrics: CPU > 60%, WebSocket connection count, or custom CloudWatch metric.
-Vertical: Define multiple launch templates (small/medium/large). Use Instance Refresh or Scheduled Scaling to bump size during known busy windows.
-Container Orchestrator: If you move to Kubernetes, enable Cluster Autoscaler plus HPA on Pods using request counts or CPU.
-Signaling State Externalization
-
-Current server keeps peers in memory; scaling horizontally requires shared state. Options:
-Redis Pub/Sub or Streams: store peer registry, broadcast updates.
-Managed DB (DynamoDB/Firestore) for peer availability.
-Use WebSocket sticky sessions at the load balancer (based on cookie) to keep each peer pair on same node, or adopt Redis-based signaling so any node can respond.
-Media Considerations
-
-simple-peer connections are P2P, but TURN servers must scale too. Deploy coturn on autoscaled instances or use managed TURN (Twilio/Nimble Ape). Use Terraform to provision TURN servers with autoscaling similar to signaling nodes.
-CI/CD Hooks
-
-Build container in CI, push to registry (ECR/AR). Terraform pipeline runs terraform plan/apply per environment with manual approval for prod.
-Blue/green or rolling deploys: update launch template image tag, trigger autoscaling Instance Refresh or Kubernetes rolling update.
-Monitoring & Alerts
-
-Metrics: CPU, memory, ws connection count, signaling latency, ICE success rate.
-Logs: pipe to CloudWatch Logs/Stackdriver.
-Alerts: on scaling failure, high error rate, TURN bandwidth saturation.
-Cost Controls
-
-Configure autoscaling min capacity low (e.g., 1–2 instances).
-Use spot/preemptible nodes for TURN or signaling workers with disruption-tolerant design.
-Scheduled scaling down overnight.
-Disaster Recovery
-
-Secondary region Terraform workspace ready; replicate Redis/DB via managed services.
-Store configs (TURN secrets, TLS certs) in Parameter Store/Secrets Manager referenced by Terraform.
-This roadmap keeps everything declarative, allows one-command scaling, and supports both auto scale-up for traffic spikes and contractions when idle.
 
 API Endpoints Example
 curl "http://localhost:4000/api/peers/by-name?name=Alice"
