@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple Peer AV Chat</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header>
+        <h1>Simple Peer Studio</h1>
+        <p>Peer-to-peer audio & video with manual call control.</p>
+      </header>
+
+      <section class="panel identity-panel">
+        <div>
+          <label for="displayName">Display name</label>
+          <input type="text" id="displayName" maxlength="32" placeholder="e.g. Nova" />
+          <label for="siteId">Site ID</label>
+          <input type="text" id="siteId" maxlength="64" placeholder="e.g. site-001" />
+          <input type="text" id="ownername" maxlength="32" value="owner-123456" />
+        </div>
+        <svg id="joinBtn" class="loader" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="20" cy="20" r="16" stroke="currentColor" stroke-width="2" stroke-dasharray="25.1 75.4" stroke-linecap="round">
+            <animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 20 20" to="360 20 20" dur="1s" repeatCount="indefinite"/>
+          </circle>
+        </svg>
+        <div class="self-info">
+          <span>Your ID:</span>
+          <strong id="selfId">—</strong>
+        </div>
+      </section>
+
+      <section class="panel peers-panel">
+        <div class="panel-head">
+          <h2>Available peers</h2>
+          <small id="peerCount">0 online</small>
+        </div>
+        <ul id="peerList"></ul>
+      </section>
+
+      <section class="panel stage-panel">
+        <div class="videos">
+          <div class="video-card" id="localMediaCard">
+            <video id="localVideo" autoplay playsinline muted></video>
+            <audio id="localAudio" autoplay muted hidden></audio>
+            <span>Local preview</span>
+          </div>
+          <div class="video-card" id="remoteMediaCard">
+            <video id="remoteVideo" autoplay playsinline></video>
+            <audio id="remoteAudio" autoplay hidden></audio>
+            <span>Remote stream</span>
+          </div>
+        </div>
+        <div class="controls">
+          <div class="target-field">
+            <label for="targetPeerId">Target peer ID</label>
+            <input
+              type="text"
+              id="targetPeerId"
+              placeholder="Paste peer ID or select from the roster"
+              maxlength="64"
+            />
+            <small>Select a peer above or paste their ID to dial directly.</small>
+          </div>
+          <div class="av-toggles">
+            <span>Media streams</span>
+            <label class="toggle-chip">
+              <input type="checkbox" id="videoToggle" />
+              <span>Video</span>
+            </label>
+            <label class="toggle-chip">
+              <input type="checkbox" id="audioToggle" checked />
+              <span>Audio</span>
+            </label>
+          </div>
+          <div class="control-buttons">
+            <button id="callBtn" disabled>Call Target</button>
+            <button id="endBtn" disabled>End Call</button>
+            <span id="callTimer" class="call-timer" hidden>00:00</span>
+          </div>
+        </div>
+        <div class="status" id="status"></div>
+      </section>
+
+      <section class="panel incoming-panel" id="incomingPanel" hidden>
+        <div>
+          <p><strong id="incomingName"></strong> is calling…</p>
+          <div class="incoming-actions">
+            <button id="acceptBtn" disabled>Accept</button>
+            <button id="rejectBtn" disabled>Reject</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel chat-panel" id="chatPanel" hidden>
+        <div class="chat-head">
+          <h2>Peer Chat</h2>
+        </div>
+        <div class="chat-log" id="chatLog"></div>
+        <div class="chat-compose">
+          <input type="text" id="chatInput" placeholder="Type a message" maxlength="500" />
+          <button id="chatSend" disabled>Send</button>
+        </div>
+      </section>
+
+    </div>
+
+  <script src="runtime-config.js"></script>
+  <script src="bundle.js"></script>
+
+    <!-- <input type="hidden" id="username" name="username"  value=""/> -->
+  </body>
+</html>
